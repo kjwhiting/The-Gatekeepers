@@ -18,7 +18,7 @@ So the safeguard that matters most isn't a filter or a rule. It's other people, 
 
 ## The goal
 
-This is not about withholding AI from people. It's about accountability: people who know what they're doing should be the ones using these tools, and the people around them should be able to say so when something looks off.
+This is not about withholding AI from people. It's about accountability.
 
 That protects two groups:
 
