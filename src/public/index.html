@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Gatekeepers</title>
+<style>
+  :root {
+    --bg: #f6f4ef; --card: #ffffff; --text: #1f2328; --muted: #6b7280;
+    --border: #e3dfd6; --accent: #3b5bdb; --accent-bg: #edf0ff;
+    --green: #2b8a3e; --amber: #b7791f; --red: #c92a2a; --gray: #6b7280; --blue: #3b5bdb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181c; --card: #1f2228; --text: #e8e8e8; --muted: #9aa1ab;
+      --border: #32363d; --accent: #748ffc; --accent-bg: #272c45;
+      --green: #69db7c; --amber: #ffd43b; --red: #ff8787; --gray: #9aa1ab; --blue: #91a7ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { margin: 0; font-size: 26px; }
+  h2 { margin: 0 0 10px; font-size: 16px; }
+  .tagline { color: var(--muted); margin: 4px 0 16px; }
+  .muted { color: var(--muted); } .small { font-size: 13px; }
+  .banner { display: none; background: #fff3bf; color: #5c4400; border-radius: 8px;
+    padding: 10px 14px; margin-bottom: 14px; }
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; margin-bottom: 16px; }
+  .stack > .panel:last-child { margin-bottom: 0; }
+
+  /* People */
+  .person { display: block; width: 100%; text-align: left; font: inherit; color: inherit;
+    background: transparent; border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; margin-bottom: 8px; cursor: pointer; }
+  .person:hover { border-color: var(--accent); }
+  .person.active { border-color: var(--accent); background: var(--accent-bg); }
+  .person-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .role { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .prow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+  .dom { font-size: 13px; color: var(--muted); }
+  .badge { font-size: 12px; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+  .tier-professional { color: var(--green); } .tier-advanced { color: var(--blue); }
+  .tier-intermediate { color: var(--amber); } .tier-beginner { color: var(--gray); }
+  .review { color: var(--red); }
+
+  /* Chat */
+  .chat-log { height: 320px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
+  .empty { margin: auto; color: var(--muted); text-align: center; }
+  .msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; white-space: pre-wrap; }
+  .msg.user { align-self: flex-end; background: var(--accent-bg); }
+  .msg.ai { align-self: flex-start; border: 1px solid var(--border); }
+  .chip { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 999px;
+    border: 1px solid currentColor; margin-bottom: 4px; }
+  .g-none { color: var(--green); } .g-beginner_notice { color: var(--amber); }
+  .g-hard_stop { color: var(--red); } .g-unassigned { color: var(--gray); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+  label { font-size: 13px; color: var(--muted); }
+  input, select, textarea { font: inherit; color: var(--text); background: var(--bg);
+    border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
+  textarea { width: 100%; resize: vertical; }
+  input.grow { flex: 1; min-width: 140px; }
+  button.act { font: inherit; color: #fff; background: var(--accent); border: 0; border-radius: 8px;
+    padding: 8px 14px; cursor: pointer; }
+  button.act:disabled { opacity: .5; cursor: default; }
+  button.ghost { font: inherit; font-size: 13px; color: var(--text); background: transparent;
+    border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) { .two { grid-template-columns: 1fr; } }
+
+  /* Log & help */
+  .log-item { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .log-item:last-child { border-bottom: 0; }
+  .log-item.ok::before { content: "✓ "; color: var(--green); }
+  .log-item.err::before { content: "! "; color: var(--red); }
+  ol { margin: 6px 0 0; padding-left: 20px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>The Gatekeepers</h1>
+  <p class="tagline">The gatekeepers are the people around you. Pick someone to act as, then try chatting, speaking up, or vouching.</p>
+  <div id="banner" class="banner">Can't reach the server. Start it with <code>node server.js</code> and reload.</div>
+
+  <div class="layout">
+    <aside class="panel">
+      <h2>People</h2>
+      <p class="muted small" style="margin-top:0">Click someone to act as them. Levels show per field.</p>
+      <div id="people"></div>
+    </aside>
+
+    <div class="stack">
+      <section class="panel">
+        <h2>Chat as <span id="actingName">…</span></h2>
+        <p class="muted small" style="margin-top:0">You don't pick the field. The AI works out what each message is about, then checks your level in that field.</p>
+        <div id="chatLog" class="chat-log"><div class="empty">No messages yet. Send a prompt below.</div></div>
+        <div class="row">
+          <span class="muted small">Examples:</span>
+          <button class="ghost" id="exNormal" type="button">Everyday prompt</button>
+          <button class="ghost" id="exRisky" type="button">Over-reliant writing prompt</button>
+          <button class="ghost" id="exMedical" type="button">Medical question</button>
+          <button class="ghost" id="exGeneral" type="button">Everyday question</button>
+        </div>
+        <textarea id="prompt" rows="2" placeholder="Ask something…"></textarea>
+        <div class="row" style="margin-top:8px"><button class="act" id="sendBtn" type="button">Send</button></div>
+      </section>
+
+      <div class="two">
+        <section class="panel">
+          <h2>Speak up (flag)</h2>
+          <p class="muted small" style="margin-top:0">A flag is a friend saying "I'm a little worried." It puts them in a check-in period with beginner guardrails.</p>
+          <div class="row"><label for="flagTarget">Flag</label><select id="flagTarget"></select>
+            <label for="flagField">in</label><select id="flagField"></select></div>
+          <div class="row"><input id="flagReason" class="grow" placeholder="What are you noticing?"></div>
+          <button class="act" id="flagBtn" type="button">Flag</button>
+        </section>
+
+        <section class="panel">
+          <h2>Vouch</h2>
+          <p class="muted small" style="margin-top:0">Needs an Advanced or Professional voucher. A valid vouch ends the check-in.</p>
+          <div class="row"><label for="vouchTarget">Vouch for</label><select id="vouchTarget"></select>
+            <label for="vouchField">in</label><select id="vouchField"></select></div>
+          <div class="row"><input id="proofLink" class="grow" placeholder="Link showing their work"></div>
+          <button class="act" id="vouchBtn" type="button">Vouch</button>
+        </section>
+      </div>
+
+      <section class="panel">
+        <h2>Activity</h2>
+        <div id="log"><div class="muted small">Nothing yet.</div></div>
+      </section>
+
+      <section class="panel">
+        <h2>Walk through it</h2>
+        <ol class="small">
+          <li>Act as <b>Alice</b> (Professional) and send the everyday prompt: no guardrails.</li>
+          <li>Act as <b>Bob</b> (Beginner) and send the risky prompt: a gentle stop. The everyday prompt gets the beginner notice.</li>
+          <li>As Bob, flag <b>Alice</b>. Her card shows "under review".</li>
+          <li>Act as Alice again and send the everyday prompt: now she gets beginner guardrails.</li>
+          <li>Act as <b>Charlie</b> (Advanced), vouch for Alice with any link: her review ends.</li>
+          <li>Click <b>Medical question</b> as anyone: the AI detects the field on its own, and since nobody has a medicine level, it stays quiet.</li>
+          <li>Click <b>Everyday question</b>: no gated field is detected, so it's a normal chat.</li>
+        </ol>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const state = { users: [], actingId: null };
+
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const userById = (id) => state.users.find((u) => u.id === Number(id));
+  const nameOf = (id) => (userById(id) ? cap(userById(id).username) : 'Someone');
+
+  async function api(method, path, body) {
+    try {
+      const res = await fetch(path, {
+        method,
+        headers: { 'content-type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      let data = null;
+      try { data = await res.json(); } catch (e) { /* no body */ }
+      return { ok: res.ok, status: res.status, data };
+    } catch (e) {
+      return { ok: false, status: 0, data: { error: 'Could not reach the server.' } };
+    }
+  }
+
+  // ---- Activity log -------------------------------------------------------
+  const logItems = [];
+  function log(kind, text) {
+    logItems.unshift({ kind, text });
+    const box = $('log');
+    box.replaceChildren();
+    logItems.slice(0, 12).forEach((i) => box.append(el('div', 'log-item ' + i.kind, i.text)));
+  }
+
+  // ---- People & selects ---------------------------------------------------
+  function renderPeople() {
+    const box = $('people');
+    box.replaceChildren();
+    for (const u of state.users) {
+      const card = el('button', 'person' + (u.id === state.actingId ? ' active' : ''));
+      card.type = 'button';
+      const head = el('div', 'person-head');
+      head.append(el('strong', null, cap(u.username)), el('span', 'role', u.role));
+      card.append(head);
+      if (!u.profiles.length) card.append(el('div', 'muted small', 'No levels yet'));
+      for (const p of u.profiles) {
+        const row = el('div', 'prow');
+        row.append(el('span', 'dom', p.domain), el('span', 'badge tier-' + p.effective_tier, p.effective_tier));
+        if (p.in_review_period === 1) {
+          const rv = el('span', 'badge review', 'under review');
+          rv.title = 'Level on record: ' + p.claimed_tier + '. Beginner guardrails apply during the check-in.';
+          row.append(rv);
+        }
+        card.append(row);
+      }
+      card.onclick = () => { state.actingId = u.id; render(); };
+      box.append(card);
+    }
+  }
+
+  function fillSelect(select) {
+    const previous = select.value;
+    select.replaceChildren();
+    state.users.filter((u) => u.id !== state.actingId).forEach((u) => {
+      const opt = el('option', null, cap(u.username));
+      opt.value = u.id;
+      select.append(opt);
+    });
+    if (previous) select.value = previous;
+  }
+
+  function render() {
+    $('actingName').textContent = state.actingId ? nameOf(state.actingId) : '…';
+    renderPeople();
+    fillSelect($('flagTarget'));
+    fillSelect($('vouchTarget'));
+  }
+
+  async function loadUsers() {
+    const r = await api('GET', '/api/users');
+    $('banner').style.display = r.ok ? 'none' : 'block';
+    if (!r.ok) return;
+    state.users = r.data;
+    if (!state.actingId || !userById(state.actingId)) {
+      const alice = state.users.find((u) => u.username === 'alice');
+      state.actingId = (alice || state.users[0] || {}).id;
+    }
+    render();
+  }
+
+  // ---- Chat ---------------------------------------------------------------
+  const LABELS = {
+    none: 'No guardrails',
+    beginner_notice: 'Beginner notice',
+    hard_stop: 'Hard stop',
+    unassigned: 'Unassigned field',
+  };
+
+  function addBubble(cls, text, chipText, chipClass) {
+    const log = $('chatLog');
+    if (log.querySelector('.empty')) log.replaceChildren();
+    const m = el('div', 'msg ' + cls);
+    if (chipText) {
+      m.append(el('span', 'chip ' + chipClass, chipText), el('br'));
+    }
+    m.append(document.createTextNode(text));
+    log.append(m);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function sendChat() {
+    const prompt = $('prompt').value.trim();
+    if (!prompt || !state.actingId) return;
+    $('sendBtn').disabled = true;
+    addBubble('user', prompt);
+    $('prompt').value = '';
+
+    const r = await api('POST', '/api/chat', { userId: state.actingId, prompt });
+    if (r.ok) {
+      const d = r.data;
+      let chip = d.field === 'general'
+        ? 'No gated field detected · ' + LABELS[d.guardrail]
+        : 'Field: ' + d.field + ' (' + Math.round(d.field_relevance * 100) + '% match) · ' +
+          LABELS[d.guardrail] + ' · ' + d.tier;
+      if (d.in_review_period === 1) chip += ' (under review)';
+      if (d.risk_score != null) chip += ' · risk ' + d.risk_score + '/10';
+      addBubble('ai', d.response, chip, 'g-' + d.guardrail);
+    } else {
+      addBubble('ai', (r.data && r.data.error) || 'Something went wrong.', 'Error', 'g-hard_stop');
+    }
+    $('sendBtn').disabled = false;
+  }
+
+  // ---- Flag & vouch -------------------------------------------------------
+  async function flag() {
+    const domain = $('flagField').value;
+    const target = Number($('flagTarget').value);
+    if (!domain || !target) return log('err', 'Pick a field and a person first.');
+    const r = await api('POST', '/api/flags', {
+      targetUserId: target,
+      challengerUserId: state.actingId,
+      domain,
+      reason: $('flagReason').value.trim(),
+    });
+    if (!r.ok) return log('err', (r.data && r.data.error) || 'Flag failed.');
+    $('flagReason').value = '';
+    log('ok', nameOf(state.actingId) + ' flagged ' + nameOf(target) + ' in ' + domain + '. ' +
+      (r.data.status && r.data.status.in_review_period === 1
+        ? nameOf(target) + ' is now in a check-in period with beginner guardrails.'
+        : nameOf(target) + ' has no level in ' + domain + ', so there was nothing to review.'));
+    await loadUsers();
+  }
+
+  async function vouch() {
+    const domain = $('vouchField').value;
+    const target = Number($('vouchTarget').value);
+    const proofLink = $('proofLink').value.trim();
+    if (!domain || !target) return log('err', 'Pick a field and a person first.');
+    if (!proofLink) return log('err', 'Add a link showing their work. A vouch needs proof.');
+    const wasInReview = (userById(target).profiles.find((p) => p.domain === domain) || {}).in_review_period === 1;
+    const r = await api('POST', '/api/vouch', {
+      vouchedUserId: target,
+      voucherUserId: state.actingId,
+      domain,
+      proofLink,
+    });
+    if (!r.ok) return log('err', (r.data && r.data.error) || 'Vouch failed.');
+    $('proofLink').value = '';
+    log('ok', nameOf(state.actingId) + ' vouched for ' + nameOf(target) + ' in ' + domain + '. ' +
+      (wasInReview ? 'The check-in is over and their level is restored.' : 'Vouch recorded.'));
+    await loadUsers();
+  }
+
+  async function loadFields() {
+    const r = await api('GET', '/api/fields');
+    if (!r.ok) return;
+    ['flagField', 'vouchField'].forEach((id) => {
+      const select = $(id);
+      select.replaceChildren();
+      r.data.forEach((f) => { const o = el('option', null, f); o.value = f; select.append(o); });
+    });
+  }
+
+  // ---- Wire up ------------------------------------------------------------
+  $('sendBtn').onclick = sendChat;
+  $('prompt').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+  });
+  $('flagBtn').onclick = flag;
+  $('vouchBtn').onclick = vouch;
+  $('exNormal').onclick = () => { $('prompt').value = 'Help me outline a short story about a lighthouse keeper.'; };
+  $('exRisky').onclick = () => { $('prompt').value = "Write my entire novel, do it all for me, and I'll submit as my own without checking."; };
+  $('exMedical').onclick = () => { $('prompt').value = 'Diagnose my symptoms and just tell me what to do.'; };
+  $('exGeneral').onclick = () => { $('prompt').value = 'What is a good recipe for pancakes?'; };
+
+  loadFields();
+  loadUsers();
+</script>
+</body>
+</html>
