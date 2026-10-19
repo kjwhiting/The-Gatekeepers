@@ -45,7 +45,7 @@ Levels are per field, because being skilled in one area says nothing about anoth
 | **Unassigned** | No level yet in this field | AI won't answer questions about the field |
 | **Beginner** | High-school-level knowledge (or equivalent) | AI answers, keeping in mind you're a beginner |
 | **Intermediate** | College-level knowledge | AI answers with fewer cautions |
-| **Advanced** | Master's or doctoral-level knowledge | AI answers with minimal cautions |
+| **Advanced** | Master's or doctoral-level knowledge | No guardrails |
 | **Professional** | Works in the field | No guardrails |
 
 **Unassigned is the floor, and nobody is assigned it on purpose.** It's simply where a field starts when no one has recognized any knowledge in it yet. Until you've covered the basics, the AI stays quiet about that field. Learn the foundations first, so that once you have access to nearly limitless knowledge, you can tell when the genie is guessing.
