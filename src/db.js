@@ -9,9 +9,9 @@
  * Uses better-sqlite3, which is synchronous: no callbacks or promises.
  */
 
-require('dotenv').config();
-const path = require('path');
-const Database = require('better-sqlite3');
+require("dotenv").config();
+const path = require("path");
+const Database = require("better-sqlite3");
 
 // ---------------------------------------------------------------------------
 // Setup
@@ -19,26 +19,26 @@ const Database = require('better-sqlite3');
 
 // DB location: DB_PATH from .env if set, otherwise gatekeeper.db in the
 // directory you launch the app from.
-const DB_PATH = process.env.DB_PATH || path.join(process.cwd(), 'gatekeeper.db');
+const DB_PATH =
+  process.env.DB_PATH || path.join(process.cwd(), "gatekeeper.db");
 
 const db = new Database(DB_PATH);
-db.pragma('foreign_keys = ON'); // enforce the user_id references below
+db.pragma("foreign_keys = ON"); // enforce the user_id references below
 
 // Tiers that can be stored. "unassigned" is intentionally NOT stored: a user
 // with no domain_profiles row for a domain is unassigned in that domain
 // (see getUserDomainStatus).
-const TIERS = ['beginner', 'intermediate', 'advanced', 'professional'];
+const TIERS = ["beginner", "intermediate", "advanced", "professional"];
 
 // ---------------------------------------------------------------------------
 // Schema
 // ---------------------------------------------------------------------------
 
 db.exec(`
-  -- People. role is free text, e.g. 'adult', 'parent', 'teen'.
+  -- People. Just an id and a name; everything else is about fields and levels.
   CREATE TABLE IF NOT EXISTS users (
     id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    role     TEXT NOT NULL DEFAULT 'adult'
+    username TEXT NOT NULL UNIQUE
   );
 
   -- One row per (user, domain). claimed_tier is the level on record;
@@ -83,17 +83,17 @@ db.exec(`
 
 /** Effective tier rule: in review means forced to 'beginner'. */
 function computeEffectiveTier(claimedTier, inReview) {
-  return inReview ? 'beginner' : claimedTier;
+  return inReview ? "beginner" : claimedTier;
 }
 
 /** Look up a user by id. Returns the row or undefined. */
 function getUserById(id) {
-  return db.prepare('SELECT * FROM users WHERE id = ?').get(id);
+  return db.prepare("SELECT * FROM users WHERE id = ?").get(id);
 }
 
 /** Look up a user by username. Returns the row or undefined. */
 function getUserByUsername(username) {
-  return db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+  return db.prepare("SELECT * FROM users WHERE username = ?").get(username);
 }
 
 /**
@@ -103,7 +103,7 @@ function getUserByUsername(username) {
  */
 function getUserDomainStatus(userId, domain) {
   const row = db
-    .prepare('SELECT * FROM domain_profiles WHERE user_id = ? AND domain = ?')
+    .prepare("SELECT * FROM domain_profiles WHERE user_id = ? AND domain = ?")
     .get(userId, domain);
 
   if (row) return row;
@@ -111,8 +111,8 @@ function getUserDomainStatus(userId, domain) {
   return {
     user_id: userId,
     domain,
-    claimed_tier: 'unassigned',
-    effective_tier: 'unassigned',
+    claimed_tier: "unassigned",
+    effective_tier: "unassigned",
     in_review_period: 0,
   };
 }
@@ -122,7 +122,7 @@ function getOpenFlags(targetUserId, domain) {
   return db
     .prepare(
       `SELECT * FROM flags
-       WHERE target_user_id = ? AND domain = ? AND status = 'open'`
+       WHERE target_user_id = ? AND domain = ? AND status = 'open'`,
     )
     .all(targetUserId, domain);
 }
@@ -130,7 +130,7 @@ function getOpenFlags(targetUserId, domain) {
 /** All vouches a user has received in a domain. */
 function getVouches(vouchedUserId, domain) {
   return db
-    .prepare('SELECT * FROM vouches WHERE vouched_user_id = ? AND domain = ?')
+    .prepare("SELECT * FROM vouches WHERE vouched_user_id = ? AND domain = ?")
     .all(vouchedUserId, domain);
 }
 
@@ -141,15 +141,22 @@ function getVouches(vouchedUserId, domain) {
  */
 function setReviewState(userId, domain, inReview) {
   const profile = db
-    .prepare('SELECT claimed_tier FROM domain_profiles WHERE user_id = ? AND domain = ?')
+    .prepare(
+      "SELECT claimed_tier FROM domain_profiles WHERE user_id = ? AND domain = ?",
+    )
     .get(userId, domain);
   if (!profile) return null;
 
   db.prepare(
     `UPDATE domain_profiles
      SET in_review_period = ?, effective_tier = ?
-     WHERE user_id = ? AND domain = ?`
-  ).run(inReview ? 1 : 0, computeEffectiveTier(profile.claimed_tier, inReview), userId, domain);
+     WHERE user_id = ? AND domain = ?`,
+  ).run(
+    inReview ? 1 : 0,
+    computeEffectiveTier(profile.claimed_tier, inReview),
+    userId,
+    domain,
+  );
 
   return getUserDomainStatus(userId, domain);
 }
@@ -158,22 +165,24 @@ function setReviewState(userId, domain, inReview) {
  * Add a flag and immediately put the target into a review period.
  * Both steps happen in one transaction. Returns { flagId, status }.
  */
-const addFlag = db.transaction(({ targetUserId, challengerUserId, domain, reason }) => {
-  const info = db
-    .prepare(
-      `INSERT INTO flags (target_user_id, challenger_user_id, domain, reason)
-       VALUES (?, ?, ?, ?)`
-    )
-    .run(targetUserId, challengerUserId, domain, reason || null);
+const addFlag = db.transaction(
+  ({ targetUserId, challengerUserId, domain, reason }) => {
+    const info = db
+      .prepare(
+        `INSERT INTO flags (target_user_id, challenger_user_id, domain, reason)
+       VALUES (?, ?, ?, ?)`,
+      )
+      .run(targetUserId, challengerUserId, domain, reason || null);
 
-  const status = setReviewState(targetUserId, domain, true);
-  return { flagId: info.lastInsertRowid, status };
-});
+    const status = setReviewState(targetUserId, domain, true);
+    return { flagId: info.lastInsertRowid, status };
+  },
+);
 
 /** True if the user is currently Advanced or Professional in the domain. */
 function isEligibleVoucher(userId, domain) {
   const { effective_tier } = getUserDomainStatus(userId, domain);
-  return effective_tier === 'advanced' || effective_tier === 'professional';
+  return effective_tier === "advanced" || effective_tier === "professional";
 }
 
 /**
@@ -184,12 +193,12 @@ function isEligibleVoucher(userId, domain) {
  */
 function addVouch({ vouchedUserId, voucherUserId, domain, proofLink }) {
   if (!isEligibleVoucher(voucherUserId, domain)) {
-    throw new Error('Voucher must be Advanced or Professional in this domain.');
+    throw new Error("Voucher must be Advanced or Professional in this domain.");
   }
   const info = db
     .prepare(
       `INSERT INTO vouches (vouched_user_id, voucher_user_id, domain, proof_link)
-       VALUES (?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?)`,
     )
     .run(vouchedUserId, voucherUserId, domain, proofLink || null);
   return info.lastInsertRowid;
@@ -202,7 +211,7 @@ function addVouch({ vouchedUserId, voucherUserId, domain, proofLink }) {
 const resolveFlags = db.transaction((targetUserId, domain) => {
   db.prepare(
     `UPDATE flags SET status = 'resolved'
-     WHERE target_user_id = ? AND domain = ? AND status = 'open'`
+     WHERE target_user_id = ? AND domain = ? AND status = 'open'`,
   ).run(targetUserId, domain);
 
   return setReviewState(targetUserId, domain, false);
@@ -213,36 +222,44 @@ const resolveFlags = db.transaction((targetUserId, domain) => {
 // ---------------------------------------------------------------------------
 
 function seed() {
-  const { count } = db.prepare('SELECT COUNT(*) AS count FROM users').get();
+  const { count } = db.prepare("SELECT COUNT(*) AS count FROM users").get();
   if (count > 0) return;
 
-  const insertUser = db.prepare('INSERT INTO users (username, role) VALUES (?, ?)');
+  const insertUser = db.prepare("INSERT INTO users (username) VALUES (?)");
   const insertProfile = db.prepare(
     `INSERT INTO domain_profiles
        (user_id, domain, claimed_tier, effective_tier, in_review_period)
-     VALUES (?, ?, ?, ?, 0)`
+     VALUES (?, ?, ?, ?, 0)`,
   );
 
   db.transaction(() => {
     // Alice: Professional writer, unflagged.
-    const alice = insertUser.run('alice', 'adult').lastInsertRowid;
-    insertProfile.run(alice, 'writing', 'professional', 'professional');
+    const alice = insertUser.run("alice").lastInsertRowid;
+    insertProfile.run(alice, "writing", "professional", "professional");
 
     // Bob: Beginner writer.
-    const bob = insertUser.run('bob', 'adult').lastInsertRowid;
-    insertProfile.run(bob, 'writing', 'beginner', 'beginner');
+    const bob = insertUser.run("bob").lastInsertRowid;
+    insertProfile.run(bob, "writing", "beginner", "beginner");
 
-    // Charlie: a parent who is also an Advanced writer, so he can flag people
-    // (e.g. Dave) and vouch for peers (e.g. Alice in the demo).
-    const charlie = insertUser.run('charlie', 'parent').lastInsertRowid;
-    insertProfile.run(charlie, 'writing', 'advanced', 'advanced');
+    // Charlie: Advanced writer, so he can vouch for peers (e.g. Alice in the demo).
+    const charlie = insertUser.run("charlie").lastInsertRowid;
+    insertProfile.run(charlie, "writing", "advanced", "advanced");
 
-    // Dave: a teenager, Beginner writer.
-    const dave = insertUser.run('dave', 'teen').lastInsertRowid;
-    insertProfile.run(dave, 'writing', 'beginner', 'beginner');
+    // Dave: Beginner writer.
+    const dave = insertUser.run("dave").lastInsertRowid;
+    insertProfile.run(dave, "writing", "beginner", "beginner");
+
+    // Erin: Intermediate writer.
+    const erin = insertUser.run("erin").lastInsertRowid;
+    insertProfile.run(erin, "writing", "intermediate", "intermediate");
+
+    // Frank: no profile in any field, so he is unassigned everywhere.
+    insertUser.run("frank");
   })();
 
-  console.log('Seeded gatekeeper.db with alice, bob, charlie, dave.');
+  console.log(
+    "Seeded gatekeeper.db with alice, bob, charlie, dave, erin, frank.",
+  );
 }
 
 seed();

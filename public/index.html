@@ -40,7 +40,6 @@
   .person:hover { border-color: var(--accent); }
   .person.active { border-color: var(--accent); background: var(--accent-bg); }
   .person-head { display: flex; justify-content: space-between; align-items: baseline; }
-  .role { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
   .prow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
   .dom { font-size: 13px; color: var(--muted); }
   .badge { font-size: 12px; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
@@ -143,6 +142,7 @@
           <li>As Bob, flag <b>Alice</b>. Her card shows "under review".</li>
           <li>Act as Alice again and send the everyday prompt: now she gets beginner guardrails.</li>
           <li>Act as <b>Charlie</b> (Advanced), vouch for Alice with any link: her review ends.</li>
+          <li>Act as <b>Frank</b> (no levels yet) and send the everyday writing prompt: the AI stays quiet, because he has no level in writing.</li>
           <li>Click <b>Medical question</b> as anyone: the AI detects the field on its own, and since nobody has a medicine level, it stays quiet.</li>
           <li>Click <b>Everyday question</b>: no gated field is detected, so it's a normal chat.</li>
         </ol>
@@ -197,7 +197,7 @@
       const card = el('button', 'person' + (u.id === state.actingId ? ' active' : ''));
       card.type = 'button';
       const head = el('div', 'person-head');
-      head.append(el('strong', null, cap(u.username)), el('span', 'role', u.role));
+      head.append(el('strong', null, cap(u.username)));
       card.append(head);
       if (!u.profiles.length) card.append(el('div', 'muted small', 'No levels yet'));
       for (const p of u.profiles) {
