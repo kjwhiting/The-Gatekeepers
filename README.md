@@ -48,13 +48,10 @@ Levels are per field, because being skilled in one area says nothing about anoth
 | **Advanced** | Master's or doctoral-level knowledge | No guardrails |
 | **Professional** | Works in the field | No guardrails |
 
-**Unassigned is the floor, and nobody is assigned it on purpose.** It's simply where a field starts when no one has recognized any knowledge in it yet. Until you've covered the basics, the AI stays quiet about that field. Learn the foundations first, so that once you have access to nearly limitless knowledge, you can tell when the genie is guessing.
-
-Once you have a high school education or its equivalent in a field, you move to **Beginner**. The AI will answer, but it keeps in mind that you're new to the subject.
 
 ### Everyday fields
 
-Some things everyone does: cooking, cleaning, personal hygiene, and the like. For these, people can start at **Advanced** out of the gate, because that's what a lifetime of practice looks like. If someone close to you notices something concerning, that level can come down.
+Some things everyone does: cooking, cleaning, personal hygiene, and the like. For these, people can start at **Advanced** out of the gate, because that's what life expects. If someone close to you notices something concerning, they can trigger the review by challenging the level.
 
 ## Moving up
 
@@ -73,7 +70,7 @@ Anyone, whether a peer, a friend, or a parent, can flag someone's level in a fie
 When a flag is raised:
 
 1. The person enters a **check-in period** for that field.
-2. During it, they get **beginner-level guardrails**, whatever level they held.
+2. During it, they get **-1 level guardrails**.
 3. Other fields are unaffected.
 
 ## Getting back on solid ground
@@ -92,8 +89,10 @@ Every AI conversation goes through a proxy that carries out what the community h
 - **Unassigned field:** the AI declines to answer questions about that field.
 - **Professionals in good standing:** no domain guardrails.
 - **Beginners, and anyone in a check-in period:** a quick risk check on the request (1 to 10):
-  - **7 or higher:** a gentle stop, recommending they speak to a professional.
-  - **Below 7:** the answer goes through, with a friendly note that they're a beginner in this area (or being checked in on).
+  - **4 or higher:** a gentle stop, recommending they speak to a professional.
+  - **Below 4:** the answer goes through, with a friendly note that they're a beginner in this area (or being checked in on).
+
+## CEO's and AI owners should not be exempt from the system. Yes, a random individual would be able to look up their account and flag fields if they feel they are spreading misinformation or making inaccurate claims.
 
 ## What this is not
 
@@ -103,8 +102,7 @@ Every AI conversation goes through a proxy that carries out what the community h
 
 ## Open questions
 
-- How do we keep flagging caring rather than retaliatory?
-- How do we keep vouching from turning into a favor economy?
 - What counts as "showing knowledge" in each field?
+- - Determined by each field. Authors may require advanced level to be from someone who has a published book without AI assistance. If they can produce that they are give professional access. Artists may follow a similar path.
 
-We'll work these out after the proof of concept proves the core loop.
+As a proof of concept this is not finalized concept. Just enough to help people get a general idea of what it looks like. 
