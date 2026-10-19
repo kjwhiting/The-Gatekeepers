@@ -92,7 +92,7 @@ Every AI conversation goes through a proxy that carries out what the community h
   - **4 or higher:** a gentle stop, recommending they speak to a professional.
   - **Below 4:** the answer goes through, with a friendly note that they're a beginner in this area (or being checked in on).
 
-## CEO's and AI owners should not be exempt from the system. Yes, a random individual would be able to look up their account and flag fields if they feel they are spreading misinformation or making inaccurate claims.
+## CEO's and AI owners should not be exempt from the system. Yes, a random individual would be able to look up their account and flag fields if they feel they are using AI irresponsibly.
 
 ## What this is not
 
@@ -103,6 +103,6 @@ Every AI conversation goes through a proxy that carries out what the community h
 ## Open questions
 
 - What counts as "showing knowledge" in each field?
-- - Determined by each field. Authors may require advanced level to be from someone who has a published book without AI assistance. If they can produce that they are give professional access. Artists may follow a similar path.
+ - Determined by each field. Authors may require advanced level to be from someone who has a published book without AI assistance. If they can produce that they are give professional access. Artists may follow a similar path.
 
 As a proof of concept this is not finalized concept. Just enough to help people get a general idea of what it looks like. 
