@@ -1,84 +1,110 @@
-# The Gatekeeper — Vision
+# The Gatekeepers: Vision
 
 > "If you're not qualified to do things without AI, you are not qualified to do them with AI."
 
-## Mission
+## Who the gatekeepers are
 
-AI makes it easy to produce work that *looks* competent in domains where the person asking has no real competence. The Gatekeeper is a proof of concept for a different default: AI assistance that scales with **demonstrated human skill**, not with a person's self-claimed expertise.
+The gatekeepers are not the app. They're the people around you: your friends, your family, your colleagues, your peers in a field.
 
-The goal is not to withhold AI from people. It is to make sure that where the stakes are real, the person using AI can tell good output from bad output, and that someone other than the person themselves has a say in whether they can.
+That's the idea behind the name. No software can see how you're really doing with a powerful tool, but the people who know you can. The app doesn't decide who's ready. It gives the people around you a way to speak up, and makes sure that voice counts.
 
-## Core Principle: Human Gatekeeping
+## Why this exists
 
-Self-assessment is the weakest signal of skill. The people best placed to judge competence are the humans around you: peers who do the work, and friends or parents who see how you actually operate.
+AI feels like a magic genie. Ask anything, get a confident answer, and it's easy to forget that the answer might be wrong, or that you don't know enough to tell.
 
-So the system's trust model is built on people, not on a quiz or a self-declared label:
+The greatest danger AI poses is the one we can't see ourselves. When we lean on it too heavily, we're usually the last to notice. The people around us often see it first. They've watched us learn, they know what we know, and they can tell when we've stopped checking.
 
-- **Claimed tier is a starting point, not a verdict.** A user declares a tier per domain, and the system treats it as provisional.
-- **Humans can challenge it.** Any other user can flag a claim they believe is inflated.
-- **Humans must confirm it.** Clearing a flag or reaching the top tier requires proof of competency plus a vouch from someone already advanced in that domain.
+So the safeguard that matters most isn't a filter or a rule. It's other people, and The Gatekeepers is built to strengthen that.
 
-## Domain Tiers
+## The goal
 
-Skill is tracked per domain (e.g. medicine, law, electrical work, finance), because being a professional in one area says nothing about another.
+This is not about withholding AI from people. It's about accountability: people who know what they're doing should be the ones using these tools, and the people around them should be able to say so when something looks off.
 
-| Tier | Meaning | AI behavior |
+That protects two groups:
+
+- **Beginners**, who can't see how AI might lead them astray, because they don't yet know enough to spot a bad answer.
+- **Professionals and the public**, by reducing misinformation and discouraging the quiet theft of other people's work.
+
+## We're here to protect each other
+
+None of this is new. Most of us already do it. A friend notices you've been asking a chatbot about everything. A parent asks whether you've checked that answer with a real person. A coworker says, "Are you sure that's right?"
+
+Those are gatekeepers at work. The app makes that natural instinct visible and gives it weight. It's a **soft enforcement**, not a strict one:
+
+- There are no exams and no paperwork. Moving up is as easy as working with someone who knows the field.
+- You don't pick your own level. The people who know your work and your field do.
+- Others can speak up when they see something concerning.
+- When they do, it means something.
+
+## Skill levels
+
+Levels are per field, because being skilled in one area says nothing about another. Almost everyone is a beginner in most things, and that's completely normal.
+
+| Level | What it looks like | What AI does |
 |---|---|---|
-| `beginner` | Learning, or unproven in this domain | Risk-scored guardrails |
-| `intermediate` | Working knowledge, not yet independently vouched | Risk-scored guardrails |
-| `advanced` | Strong, peer-recognized competence; can vouch for others | Lighter guardrails; vouching rights |
-| `professional` | Vouched, proven, and unflagged | Zero domain guardrails |
+| **Unassigned** | No level yet in this field | AI won't answer questions about the field |
+| **Beginner** | High-school-level knowledge (or equivalent) | AI answers, keeping in mind you're a beginner |
+| **Intermediate** | College-level knowledge | AI answers with fewer cautions |
+| **Advanced** | Master's or doctoral-level knowledge | AI answers with minimal cautions |
+| **Professional** | Works in the field | No guardrails |
 
-For the POC, the proxy applies guardrails to Beginners and to anyone in a review period. Unflagged Professionals pass through untouched.
+**Unassigned is the floor, and nobody is assigned it on purpose.** It's simply where a field starts when no one has recognized any knowledge in it yet. Until you've covered the basics, the AI stays quiet about that field. Learn the foundations first, so that once you have access to nearly limitless knowledge, you can tell when the genie is guessing.
 
-## Community Flagging
+Once you have a high school education or its equivalent in a field, you move to **Beginner**. The AI will answer, but it keeps in mind that you're new to the subject.
 
-**Anyone can flag.** Peers, friends, and parents are all valid flaggers, because they are often the first to notice when someone's confidence has outrun their ability, in a way no automated system would.
+### Everyday fields
 
-A flag is a request for re-vetting, not a punishment. It says: "I don't think this person's claimed level in this domain is accurate."
+Some things everyone does: cooking, cleaning, personal hygiene, and the like. For these, people can start at **Advanced** out of the gate, because that's what a lifetime of practice looks like. If someone close to you notices something concerning, that level can come down.
 
-Flags should include a domain and a short reason, so the person under review understands what is being questioned and what they would need to show.
+## Moving up
 
-## Review Periods
+You don't claim a level. You earn it from someone who has it.
 
-When a user is flagged in a domain:
+Work with an expert in the field, meaning someone at **Advanced** or **Professional** level. They see your knowledge firsthand, and if they're willing to back you, your access goes up. It's as easy as that interaction, and just as human.
 
-1. The profile moves into an **in-review period** for that domain (`in_review_period = 1`).
-2. The user is **immediately treated as a Beginner** in that domain, regardless of their claimed tier.
-3. The restriction stays until the flag is resolved through vouching.
+## Your level can always be questioned
 
-The review period fails safe. Doubt from another human is enough to apply caution, and removing that caution requires positive evidence. Other domains are unaffected.
+Any level can be questioned at any time, by anyone who knows you. If you hold a level, be ready to explain or show why. That's not a threat. It's what makes the whole thing trustworthy.
 
-## Skill Unlocks
+## Speaking up
 
-Moving up, or back out of review, requires two things together:
+Anyone, whether a peer, a friend, or a parent, can flag someone's level in a field when they think it doesn't match reality. A flag isn't an accusation. It's a friend saying, "I'm a little worried about this."
 
-1. **Proof of competency**: evidence the person can do the work without AI (a portfolio, a credential, a demonstrated task).
-2. **A vouch from an Advanced or Professional peer** in the same domain.
+When a flag is raised:
 
-Neither is sufficient alone. Proof without a vouch is self-reported evidence; a vouch without proof is a favor. Requiring both keeps the gate tied to real, checkable skill and to a human willing to put their reputation behind it.
+1. The person enters a **check-in period** for that field.
+2. During it, they get **beginner-level guardrails**, whatever level they held.
+3. Other fields are unaffected.
 
-Reaching **Professional** unlocks the final privilege: AI assistance with no domain guardrails.
+## Getting back on solid ground
 
-## How the Proxy Enforces It
+A check-in ends the same way a level is earned:
 
-All AI conversations pass through `POST /api/chat`:
+- **Show your knowledge** to someone at Advanced or Professional level in that field.
+- **Get their vouch.** That's another gatekeeper putting their name behind you.
 
-- **Unflagged Professionals:** the prompt goes through with no domain guardrails.
-- **Beginners and users in review:** the prompt gets a **risk score from 1 to 10**.
-  - **Score 7 or higher:** hard stop. The response recommends speaking to a professional.
-  - **Score below 7:** the response is allowed, with a beginner-level notice prepended.
+Showing without a vouch is just self-reporting, and a vouch without showing is just a favor. Both matter.
 
-## Non-Goals (for the POC)
+## What it looks like in the app
 
-- Not a real identity or credential verification system.
-- Not production-grade authentication, abuse prevention, or moderation of flags.
-- Not a replacement for professional advice; it simply routes people toward it when risk is high.
+Every AI conversation goes through a proxy that carries out what the community has said:
 
-## Open Questions
+- **Unassigned field:** the AI declines to answer questions about that field.
+- **Professionals in good standing:** no domain guardrails.
+- **Beginners, and anyone in a check-in period:** a quick risk check on the request (1 to 10):
+  - **7 or higher:** a gentle stop, recommending they speak to a professional.
+  - **Below 7:** the answer goes through, with a friendly note that they're a beginner in this area (or being checked in on).
 
-- How to prevent malicious or retaliatory flagging while keeping flagging open to everyone.
-- How to keep vouching from becoming a favor economy.
-- What counts as sufficient "proof of competency" in each domain.
+## What this is not
 
-These are deliberately left open for after the POC proves the core loop.
+- Not a real credential or identity verification system.
+- Not a punishment system or a replacement for professional advice.
+- Not meant to be strict. It's a proof of concept for helping people look out for each other.
+
+## Open questions
+
+- How do we keep flagging caring rather than retaliatory?
+- How do we keep vouching from turning into a favor economy?
+- What counts as "showing knowledge" in each field?
+
+We'll work these out after the proof of concept proves the core loop.
